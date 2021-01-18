@@ -61,14 +61,14 @@ pid_t MMC::getPID()
     return(0);
 }
 
-long MMC::getPlayerBase(pid_t pid)
+long MMC::getClientBase(pid_t pid)
 {
     std::stringstream mapsPath;
     std::ifstream mapsFile;
     std::string line;
     std::string playerBaseString;
     std::stringstream playerBaseStringStream;
-    long playerBaseInt;
+    long playerBaseLong;
 
     mapsPath << "/proc/" << pid << "/maps";
     mapsFile.open(mapsPath.str());
@@ -77,13 +77,13 @@ long MMC::getPlayerBase(pid_t pid)
     		if(line.find("/client_client.so") != std::string::npos){
     			//std::cout << line << "\n";
     			playerBaseString = line.substr(0, line.find("-"));
-    			std::cout << playerBaseString << "\n";
+    			//std::cout << playerBaseString << "\n";
 
     			playerBaseStringStream << std::hex << playerBaseString;
-    			playerBaseStringStream >> playerBaseInt;
-    			std::cout << playerBaseInt << "\n";
+    			playerBaseStringStream >> playerBaseLong;
+    			//std::cout << playerBaseLong << "\n";
 
-    			return(0);
+    			return(playerBaseLong);
     		}
     	}
     }

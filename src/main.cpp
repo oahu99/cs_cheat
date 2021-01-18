@@ -26,10 +26,30 @@ int main()
 {
 
 	pid_t pid;
+	long clientBase;
+	long playerBase;
 
 	MMC* mmc = new MMC; // create new memory management object
 	pid = mmc->getPID(); // get pid for currently running csgo process
 	// std::cout << pid;
-	mmc->getPlayerBase(pid);
+	clientBase = mmc->getClientBase(pid);
+	
+
+	int healthBuf;
+	long healthOffset;
+
+	clientBase += (0x22861b0);
+	std::cout << "clientBase: " << clientBase << "\n";
+
+	mmc->readMem(pid, (void*)(clientBase), &playerBase, sizeof(playerBase));
+
+	std::cout << "playerBase: " << playerBase << "\n";
+
+	playerBase += 0x138;
+
+	while (1){
+		mmc->readMem(pid, (void*)(playerBase), &healthBuf, sizeof(healthBuf));
+		std::cout << healthBuf << "\n";
+	}
 
 }

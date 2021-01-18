@@ -33,7 +33,7 @@ class MMC
 
 public:
 	pid_t getPID();
-	long getPlayerBase(pid_t pid);
+	long getClientBase(pid_t pid);
 	void readMem(pid_t pid, void* src, void* dst, size_t size);
 	void writeMem(pid_t pid, void* dst, void* src, size_t size);
 };
