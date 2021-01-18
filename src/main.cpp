@@ -21,6 +21,7 @@
 #include <vector>
 #include <string>
 #include "mmc.hpp"
+#include "kbd.hpp"
 #include "netvars.hpp"
 #include "offsets.hpp"
 
@@ -35,8 +36,10 @@ int main()
 
 	long healthOffset;
 	long fFlagsOffset;
+	long flFlashDurationOffset;
 
 	MMC* mmc = new MMC; // create new memory management object
+	KBD* kbd = new KBD;
 	pid = mmc->getPID(); // get pid for currently running csgo process
 	// std::cout << pid;
 	clientBase = mmc->getClientBase(pid);
@@ -46,6 +49,9 @@ int main()
 	int fFlags;
 	int jump;
 	bool isGround;
+	int flashDuration;
+
+	flashDuration = 0;
 
 	localPlayer = clientBase + (signatures::dwLocalPlayer);
 	forceJump = clientBase + (signatures::dwForceJump);
@@ -57,19 +63,26 @@ int main()
 
 	healthOffset = playerBase + netvars::CBasePlayer::m_iHealth;
 	fFlagsOffset = playerBase + netvars::CBasePlayer::m_fFlags;
+	flFlashDurationOffset = playerBase + netvars::CCSPlayer::m_flFlashDuration;
+
+	kbd->kbd = kbd->getKeyboardPointer();
 
 	while (1){
 		mmc->readMem(pid, (void*)(healthOffset), &healthBuf, sizeof(healthBuf));
 		mmc->readMem(pid, (void*)(fFlagsOffset), &fFlags, sizeof(fFlags));
 		mmc->readMem(pid, (void*)(forceJump), &jump, sizeof(jump));
 
+		mmc->writeMem(pid, (void*)(flFlashDurationOffset), &flashDuration, sizeof(flashDuration));
+
 		isGround = fFlags&(1<<0);
-		std::cout << "Health: " << healthBuf << " isGround: " << isGround << " jump: " << jump << "\n";
+		// //std::cout << "Health: " << healthBuf << " isGround: " << isGround << " jump: " << jump << "\n";
 
 		int jumpVal = 0x6;
 
-		if (isGround){
-			mmc->writeMem(pid, (void*)(forceJump), &jumpVal, sizeof(1));
+		// std::cout << kbd->isKeyPressed("lshift", kbd->kbd) << "\n";
+
+		if (isGround && (kbd->isKeyPressed("space", kbd->kbd)==2)){ // bunnyhop
+			mmc->writeMem(pid, (void*)(forceJump), &jumpVal, sizeof(jumpVal));
 		}
 	}
 
