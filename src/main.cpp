@@ -21,6 +21,8 @@
 #include <vector>
 #include <string>
 #include "mmc.hpp"
+#include "netvars.hpp"
+#include "offsets.hpp"
 
 int main()
 {
@@ -38,14 +40,14 @@ int main()
 	int healthBuf;
 	long healthOffset;
 
-	clientBase += (0x22861b0);
-	std::cout << "clientBase: " << clientBase << "\n";
+	clientBase += (signatures::dwLocalPlayer);
+	//std::cout << "clientBase: " << clientBase << "\n";
 
 	mmc->readMem(pid, (void*)(clientBase), &playerBase, sizeof(playerBase));
 
-	std::cout << "playerBase: " << playerBase << "\n";
+	//std::cout << "playerBase: " << playerBase << "\n";
 
-	playerBase += 0x138;
+	playerBase += netvars::CBasePlayer::m_iHealth;
 
 	while (1){
 		mmc->readMem(pid, (void*)(playerBase), &healthBuf, sizeof(healthBuf));
