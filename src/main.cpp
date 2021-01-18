@@ -30,6 +30,11 @@ int main()
 	pid_t pid;
 	long clientBase;
 	long playerBase;
+	long localPlayer;
+	long forceJump;
+
+	long healthOffset;
+	long fFlagsOffset;
 
 	MMC* mmc = new MMC; // create new memory management object
 	pid = mmc->getPID(); // get pid for currently running csgo process
@@ -38,20 +43,34 @@ int main()
 	
 
 	int healthBuf;
-	long healthOffset;
+	int fFlags;
+	int jump;
+	bool isGround;
 
-	clientBase += (signatures::dwLocalPlayer);
+	localPlayer = clientBase + (signatures::dwLocalPlayer);
+	forceJump = clientBase + (signatures::dwForceJump);
 	//std::cout << "clientBase: " << clientBase << "\n";
 
-	mmc->readMem(pid, (void*)(clientBase), &playerBase, sizeof(playerBase));
+	mmc->readMem(pid, (void*)(localPlayer), &playerBase, sizeof(playerBase));
 
 	//std::cout << "playerBase: " << playerBase << "\n";
 
-	playerBase += netvars::CBasePlayer::m_iHealth;
+	healthOffset = playerBase + netvars::CBasePlayer::m_iHealth;
+	fFlagsOffset = playerBase + netvars::CBasePlayer::m_fFlags;
 
 	while (1){
-		mmc->readMem(pid, (void*)(playerBase), &healthBuf, sizeof(healthBuf));
-		std::cout << healthBuf << "\n";
+		mmc->readMem(pid, (void*)(healthOffset), &healthBuf, sizeof(healthBuf));
+		mmc->readMem(pid, (void*)(fFlagsOffset), &fFlags, sizeof(fFlags));
+		mmc->readMem(pid, (void*)(forceJump), &jump, sizeof(jump));
+
+		isGround = fFlags&(1<<0);
+		std::cout << "Health: " << healthBuf << " isGround: " << isGround << " jump: " << jump << "\n";
+
+		int jumpVal = 0x6;
+
+		if (isGround){
+			mmc->writeMem(pid, (void*)(forceJump), &jumpVal, sizeof(1));
+		}
 	}
 
 }
