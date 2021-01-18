@@ -20,49 +20,16 @@
 #include <fcntl.h>
 #include <vector>
 #include <string>
-
-#include <filesystem>
-
-namespace fs = std::filesystem;
-
-// proc is 10847
-
+#include "mmc.hpp"
 
 int main()
 {
 
-	std::vector<std::string> pids; // contains each running pid
+	pid_t pid;
 
-    DIR* dir;
-    struct dirent *dp;
-
-    dir = opendir("/proc"); // open /proc to find PID of csgo
-    while((dp = readdir(dir)) != NULL){
-    	if (std::atoi(dp->d_name) != 0){
-    		pids.push_back(dp->d_name); // put all PIDs into a vector to be parsed later
-    	}
-    }
-
-    std::vector<std::string>::iterator iter;
-    std::stringstream commPath;
-    std::string process;
-    std::ifstream commFile(commPath.str(), std::ios::binary);
-
-    for (iter = pids.begin(); iter != pids.end(); iter++) {
-    	commPath << "/proc/" << *iter << "/comm"; // put together full file path
-  		commFile.open(commPath.str());
-    	if(commFile.is_open()) {
-    	    while (getline(commFile, process)){
-    	    	if (!(std::strcmp(process.c_str(), "csgo_linux64"))){
-    	    		std::cout << *iter << "\n";
-    	    	}
-    		}
-    	}
-    	else 
-    		std::cout << "Bad file\n";
-
-    	commFile.close();
-    	commPath.str("");
-    }
+	MMC* mmc = new MMC; // create new memory management object
+	pid = mmc->getPID(); // get pid for currently running csgo process
+	// std::cout << pid;
+	mmc->getPlayerBase(pid);
 
 }

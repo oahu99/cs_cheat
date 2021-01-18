@@ -1,4 +1,4 @@
-#include <mmc.hpp>
+#include "mmc.hpp"
 #include <iostream>
 #include <cstring>
 #include <sstream>
@@ -19,8 +19,10 @@
 #include <dlfcn.h>
 #include <link.h>
 #include <fcntl.h>
+#include <vector>
+#include <stdio.h>
 
-void MMC::getPID()
+pid_t MMC::getPID()
 {
 	std::vector<std::string> pids; // contains each running pid
 
@@ -44,8 +46,9 @@ void MMC::getPID()
   		commFile.open(commPath.str());
     	if(commFile.is_open()) {
     	    while (getline(commFile, process)){
-    	    	if (!(std::strcmp(process.c_str(), "csgo_linux64"))){
-    	    		std::cout << *iter << "\n";
+    	    	if (!(std::strcmp(process.c_str(), "csgo_linux64"))){ 
+    	    		//std::cout << *iter << "\n";
+    	    		return std::stoi(*iter);
     	    	}
     		}
     	}
@@ -55,19 +58,75 @@ void MMC::getPID()
     	commFile.close();
     	commPath.str(""); // clear path stringstream
     }
+    return(0);
 }
 
-void MMC::getPlayerBase()
+long MMC::getPlayerBase(pid_t pid)
 {
+    std::stringstream mapsPath;
+    std::ifstream mapsFile;
+    std::string line;
+    std::string playerBaseString;
+    std::stringstream playerBaseStringStream;
+    long playerBaseInt;
 
+    mapsPath << "/proc/" << pid << "/maps";
+    mapsFile.open(mapsPath.str());
+    if(mapsFile.is_open()){
+    	while(getline(mapsFile, line)){
+    		if(line.find("/client_client.so") != std::string::npos){
+    			//std::cout << line << "\n";
+    			playerBaseString = line.substr(0, line.find("-"));
+    			std::cout << playerBaseString << "\n";
+
+    			playerBaseStringStream << std::hex << playerBaseString;
+    			playerBaseStringStream >> playerBaseInt;
+    			std::cout << playerBaseInt << "\n";
+
+    			return(0);
+    		}
+    	}
+    }
+    else
+    	std::cout << "Bad File\n";
+
+	return(0);
 }
 
-int MMC::readMem()
+void MMC::readMem(pid_t pid, void* src, void* dst, size_t size)
 {
+	/*
+    pid  = target process id
+    src  = address to read from on the target process
+    dst  = address to write to on the caller process
+    size = size of the buffer that will be read
+    */
 
+    struct iovec iosrc;
+    struct iovec iodst;
+    iodst.iov_base = dst;
+    iodst.iov_len  = size;
+    iosrc.iov_base = src;
+    iosrc.iov_len  = size;
+
+    process_vm_readv(pid, &iodst, 1, &iosrc, 1, 0);
 }
 
-void MMC::writeMem()
+void MMC::writeMem(pid_t pid, void* dst, void* src, size_t size)
 {
+    /*
+    pid  = target process id
+    dst  = address to write to on the target process
+    src  = address to read from on the caller process
+    size = size of the buffer that will be read
+    */
 
+    struct iovec iosrc;
+    struct iovec iodst;
+    iosrc.iov_base = src;
+    iosrc.iov_len  = size;
+    iodst.iov_base = dst;
+    iodst.iov_len  = size;
+
+    process_vm_writev(pid, &iosrc, 1, &iodst, 1, 0);
 }

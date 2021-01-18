@@ -23,19 +23,9 @@
 
 using namespace std;
 
-int main ()
+int main()
 {
-	stringstream commPath;
-    string STRING;
-	ifstream infile;
 
-	commPath << "/proc/" << 1 << "/comm";
+	
 
-	infile.open (commPath.str());
-        while(getline(infile,STRING)) // To get you all the lines.
-        {
-	        //getline(infile,STRING); // Saves the line in STRING.
-	        cout<<STRING; // Prints our STRING.
-        }
-	infile.close();
-}
+}	
