@@ -67,6 +67,51 @@ int main()
 
 	kbd->kbd = kbd->getKeyboardPointer();
 
+	long entityObject;
+	long entityBase;
+	int team;
+	int myteam;
+
+	int glowIndex;
+
+	int yes = 1;
+	int no = 0;
+
+	long glowObject;
+
+	mmc->readMem(pid, (void*)(playerBase + signatures::dwGlowObjectManager), &glowObject, sizeof(glowObject));
+
+	float red, green, blue;
+
+	mmc->readMem(pid, (void*)(playerBase + 0x12c), &myteam, sizeof(myteam));
+	std::cout << "my team: " << myteam << "\n";
+
+	for (int i = 0; i < 64; i++){
+		entityBase = clientBase + signatures::dwEntityList + i*0x10;
+		//std::cout << entityBase << "\n";
+
+		mmc->readMem(pid, (void*)(entityBase), &entityObject, sizeof(entityObject)); // read out entity ID
+		mmc->readMem(pid, (void*)(entityObject + 0xa330), &glowIndex, sizeof(glowIndex));
+
+		if (entityObject != 0){
+			mmc->readMem(pid, (void*)(entityObject + 0x12c), &team, sizeof(team));
+			std::cout << "entity team: " << team << "\n";
+
+			if (myteam != team && (team != 0)){
+				red = 2.0;
+				mmc->writeMem(pid, (void*)(glowObject + (glowIndex * 0x38) + 0x24), &yes, sizeof(yes));
+				mmc->writeMem(pid, (void*)(glowObject + (glowIndex * 0x38) + 0x25), &no, sizeof(no));
+				mmc->writeMem(pid, (void*)(glowObject + (glowIndex * 0x38) + 0x4), &red, sizeof(red));
+			}
+			else{
+
+			}
+
+		}
+
+		// sleep(100);
+	}
+
 	while (1){
 		mmc->readMem(pid, (void*)(healthOffset), &healthBuf, sizeof(healthBuf));
 		mmc->readMem(pid, (void*)(fFlagsOffset), &fFlags, sizeof(fFlags));
