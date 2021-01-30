@@ -82,6 +82,7 @@ int main()
 		// std::cout << kbd->isKeyPressed("lshift", kbd->kbd) << "\n";
 
 		if (isGround && (kbd->isKeyPressed("space", kbd->kbd)==2)){ // bunnyhop
+			std::cout << "space\n";
 			mmc->writeMem(pid, (void*)(forceJump), &jumpVal, sizeof(jumpVal));
 		}
 	}

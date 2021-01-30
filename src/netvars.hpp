@@ -3,7 +3,7 @@
 #include <cstdint>
 
 namespace netvars {
-    // Generated on 2021-01-16 01:50:13
+    // Generated on 2021-01-29 23:46:09
     namespace CChicken {
         constexpr uintptr_t m_jumpedThisFrame = 0x306c;
         constexpr uintptr_t m_leader = 0x3070;
@@ -181,7 +181,7 @@ namespace netvars {
     namespace CCSGameRulesProxy {
         namespace CSGameRules {
             constexpr uintptr_t m_bFreezePeriod = 0x38;
-            constexpr uintptr_t m_bMatchWaitingForResume = 0x58;
+            constexpr uintptr_t m_bMatchWaitingForResume = 0x59;
             constexpr uintptr_t m_bWarmupPeriod = 0x39;
             constexpr uintptr_t m_fWarmupPeriodEnd = 0x3c;
             constexpr uintptr_t m_fWarmupPeriodStart = 0x40;
@@ -191,6 +191,7 @@ namespace netvars {
             constexpr uintptr_t m_flCTTimeOutRemaining = 0x4c;
             constexpr uintptr_t m_nTerroristTimeOuts = 0x50;
             constexpr uintptr_t m_nCTTimeOuts = 0x54;
+            constexpr uintptr_t m_bTechnicalTimeOut = 0x58;
             constexpr uintptr_t m_iRoundTime = 0x5c;
             constexpr uintptr_t m_gamePhase = 0x78;
             constexpr uintptr_t m_totalRoundsPlayed = 0x7c;
@@ -286,10 +287,11 @@ namespace netvars {
             }
             constexpr uintptr_t m_RetakeRules = 0x1420;
             namespace RetakeGameRules {
-                constexpr uintptr_t m_bBlockersPresent = 0x178;
-                constexpr uintptr_t m_bRoundInProgress = 0x179;
-                constexpr uintptr_t m_iFirstSecondHalfRound = 0x17c;
-                constexpr uintptr_t m_iBombSite = 0x180;
+                constexpr uintptr_t m_nMatchSeed = 0x170;
+                constexpr uintptr_t m_bBlockersPresent = 0x174;
+                constexpr uintptr_t m_bRoundInProgress = 0x175;
+                constexpr uintptr_t m_iFirstSecondHalfRound = 0x178;
+                constexpr uintptr_t m_iBombSite = 0x17c;
             }
         }
     }
@@ -398,6 +400,12 @@ namespace netvars {
             constexpr uintptr_t m_iWeaponPurchasesThisRound = 0xbeac;
             constexpr uintptr_t m_unActiveQuestId = 0xbc6c;
             constexpr uintptr_t m_nQuestProgressReason = 0xbc70;
+            constexpr uintptr_t m_iRetakesOffering = 0xc668;
+            constexpr uintptr_t m_iRetakesOfferingCard = 0xc66c;
+            constexpr uintptr_t m_bRetakesHasDefuseKit = 0xc670;
+            constexpr uintptr_t m_bRetakesMVPLastRound = 0xc671;
+            constexpr uintptr_t m_iRetakesMVPBoostItem = 0xc674;
+            constexpr uintptr_t m_RetakesMVPBoostExtraUtility = 0xc678;
         }
         namespace CSNonLocalPlayerExclusive {
             constexpr uintptr_t m_vecOrigin = 0x170;
@@ -523,6 +531,7 @@ namespace netvars {
         constexpr uintptr_t m_hPingedEntity = 0xf84;
         constexpr uintptr_t m_iType = 0xf88;
         constexpr uintptr_t m_bUrgent = 0xf90;
+        constexpr uintptr_t m_szPlaceName = 0xf91;
     }
     namespace CCSRagdoll {
         constexpr uintptr_t m_vecOrigin = 0x170;
